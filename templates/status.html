@@ -1,0 +1,16 @@
+{% extends 'calnew.html' %}
+{% block div %}
+
+<h1>Top Two Values from Database</h1>
+
+   
+
+	<h1>Top Two Values from Database</h1>
+
+    {% for value in top_values %}
+        <p>{{ value }}</p>
+    {% endfor %}
+
+    <h2>Maximum Value:</h2>
+    <p>{{ max_value }}</p>
+{% endblock %}
