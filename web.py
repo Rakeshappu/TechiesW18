@@ -1,4 +1,3 @@
-
 from flask import Flask, redirect, request, render_template, flash, url_for, session, jsonify, make_response
 from dbconnect import connection
 from flask_mail import Mail, Message
@@ -7,6 +6,7 @@ from smtplib import SMTP
 from flask_mysqldb import MySQL
 import os
 from datetime import datetime
+import matplotlib.pyplot as plt
 
 app = Flask(__name__)
 app.config.update(
@@ -404,26 +404,54 @@ def pledge():
     return redirect(url_for('qhome1'))
 
 
+# @app.route('/status/', methods=['GET', 'POST'])
+# def status():
+#     global res, writtn, value
+
+#     if request.method == 'GET':
+#         # Fetch top two records from per table
+#         cur = mysql.connection.cursor()
+#         cur.execute("SELECT * FROM per ;")
+#         top_records = cur.fetchall()
+#         cur.close()
+
+#         # Extracting values from the fetched records
+#         values = [record[0] for record in top_records]
+
+       
+
+#         return render_template('status.html', top_values=values)
+
+#     return redirect(url_for('qhome1'))
+
+
 @app.route('/status/', methods=['GET', 'POST'])
 def status():
     global res, writtn, value
 
     if request.method == 'GET':
-        # Fetch top two records from per table
+        # Fetch all records from per table
         cur = mysql.connection.cursor()
-        cur.execute("SELECT * FROM per ORDER BY value DESC LIMIT 2;")
-        top_records = cur.fetchall()
+        cur.execute("SELECT * FROM per ;")
+        all_records = cur.fetchall()
         cur.close()
 
         # Extracting values from the fetched records
-        values = [record[0] for record in top_records]
+        values = [record[0] for record in all_records]
 
-        max_value = max(top_values)
+        # Calculate the maximum value
+        max_value = max(values)
 
-        return render_template('status.html', max_value=max_value, top_values=values)
+        # Plot the graph
+        plt.plot(values)
+        plt.xlabel('Record Index')
+        plt.ylabel('Value')
+        plt.title('Carbon Footprint Status')
+        plt.savefig('static/graph.png')  # Save the plot as an image file
+
+        return render_template('status.html', top_values=values, max_value=max_value)
 
     return redirect(url_for('qhome1'))
-
 
 
 @app.route('/rec/', methods=['GET', 'POST'])
